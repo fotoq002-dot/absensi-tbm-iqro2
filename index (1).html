@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Sistem Absensi Kunjungan Pemustaka TBM Iqro Lempake, Samarinda">
+<title>Absensi Pemustaka — TBM Iqro</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<style>
+/* ── TOKEN SISTEM ── */
+:root {
+  --hijau:      #1b7f34;
+  --hijau-tua:  #145928;
+  --hijau-muda: #e8f5e9;
+  --hijau-mid:  #4caf50;
+  --oranye:     #e65100;
+  --oranye-mid: #ff8f00;
+  --biru:       #1565c0;
+  --biru-muda:  #e3f2fd;
+  --abu:        #546e7a;
+  --abu-muda:   #eceff1;
+  --putih:      #ffffff;
+  --teks:       #1a2e1d;
+  --teks-sub:   #4a6352;
+  --merah:      #c62828;
+  --merah-muda: #ffebee;
+  --radius:     12px;
+  --radius-sm:  8px;
+  --shadow:     0 2px 12px rgba(27,127,52,.12);
+  --shadow-lg:  0 8px 32px rgba(27,127,52,.18);
+  --trans:      .2s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #f0f7f1;
+  color: var(--teks);
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* ── HEADER ── */
+.header-banner {
+  background: linear-gradient(135deg, var(--hijau-tua) 0%, var(--hijau) 60%, var(--hijau-mid) 100%);
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.banner-img-wrap {
+  width: 100%;
+  max-height: 120px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-img-wrap img {
+  width: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.banner-default {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-icon {
+  width: 52px; height: 52px;
+  background: var(--oranye);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+
+.header-teks h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.header-teks p {
+  font-size: .75rem;
+  color: rgba(255,255,255,.75);
+  margin-top: 2px;
+}
+
+/* ── NAVIGASI TAB ── */
+.nav-tabs {
+  background: var(--hijau-tua);
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+
+.nav-tab {
+  flex: 1;
+  padding: 10px 8px;
+  text-align: center;
+  color: rgba(255,255,255,.65);
+  cursor: pointer;
+  font-size: .8rem;
+  font-weight: 600;
+  border: none;
+  background: none;
+  transition: var(--trans);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.nav-tab.aktif {
+  color: #fff;
+  background: rgba(255,255,255,.12);
+  border-bottom: 3px solid var(--oranye-mid);
+}
+
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,.08); }
+
+/* ── KONTEN UTAMA ── */
+.main { max-width: 960px; margin: 0 auto; padding: 20px 16px; }
+
+.halaman { display: none; }
+.halaman.aktif { display: block; }
+
+/* ── KARTU ── */
+.kartu {
+  background: var(--putih);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.kartu-judul {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--hijau-tua);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── STATISTIK ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  background: linear-gradient(135deg, var(--hijau) 0%, var(--hijau-mid) 100%);
+  border-radius: var(--radius-sm);
+  padding: 16px 12px;
+  text-align: center;
+  color: #fff;
+}
+
+.stat-item.oranye {
+  background: linear-gradient(135deg, var(--oranye) 0%, var(--oranye-mid) 100%);
+}
+
+.stat-item.biru {
+  background: linear-gradient(135deg, var(--biru) 0%, #1976d2 100%);
+}
+
+.stat-angka {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: .72rem;
+  opacity: .85;
+  margin-top: 4px;
+}
+
+/* ── FORMULIR ── */
+.form-group { margin-bottom: 14px; }
+
+.form-label {
+  display: block;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--teks-sub);
+  margin-bottom: 5px;
+}
+
+.form-label .wajib { color: var(--merah); margin-left: 3px; }
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #c8dfc8;
+  border-radius: var(--radius-sm);
+  font-size: .95rem;
+  color: var(--teks);
+  background: var(--putih);
+  transition: var(--trans);
+  font-family: inherit;
+  -webkit-appearance: none;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--hijau);
+  box-shadow: 0 0 0 3px rgba(27,127,52,.12);
+}
+
+.form-input.error,
+.form-select.error { border-color: var(--merah); }
+
+.form-textarea { resize: vertical; min-height: 80px; }
+
+.form-hint {
+  font-size: .75rem;
+  color: var(--abu);
+  margin-top: 4px;
+}
+
+.form-error {
+  font-size: .78rem;
+  color: var(--merah);
+  margin-top: 4px;
+  display: none;
+}
+
+.form-error.tampil { display: block; }
+
+/* ── TOMBOL ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--trans);
+  font-family: inherit;
+  text-decoration: none;
+}
+
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.btn-primer {
+  background: var(--hijau);
+  color: #fff;
+  width: 100%;
+}
+
+.btn-primer:hover:not(:disabled) { background: var(--hijau-tua); }
+
+.btn-sekunder {
+  background: var(--abu-muda);
+  color: var(--teks);
+}
+
+.btn-sekunder:hover:not(:disabled) { background: #cfd8dc; }
+
+.btn-bahaya {
+  background: var(--merah);
+  color: #fff;
+}
+
+.btn-bahaya:hover:not(:disabled) { background: #b71c1c; }
+
+.btn-kecil { padding: 7px 12px; font-size: .82rem; }
+
+/* ── NOTIFIKASI ── */
+.notif {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  left: 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideDown .3s ease;
+  display: none;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif.sukses { background: #e8f5e9; color: #1b5e20; border-left: 4px solid var(--hijau); }
+.notif.gagal  { background: var(--merah-muda); color: var(--merah); border-left: 4px solid var(--merah); }
+.notif.info   { background: var(--biru-muda); color: var(--biru); border-left: 4px solid var(--biru); }
+
+/* ── STATUS KONEKSI ── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .78rem;
+  color: var(--abu);
+  padding: 8px 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--abu-muda);
+}
+
+.dot-koneksi {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #9e9e9e;
+  flex-shrink: 0;
+}
+
+.dot-koneksi.online  { background: var(--hijau-mid); }
+.dot-koneksi.offline { background: var(--merah); }
+.dot-koneksi.loading { background: var(--oranye-mid); animation: blink .8s infinite; }
+
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+
+/* ── GRAFIK TREN ── */
+.grafik-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.grafik-svg { display: block; }
+
+/* ── TABEL ── */
+.tabel-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--abu-muda);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .85rem;
+}
+
+thead th {
+  background: var(--hijau-tua);
+  color: #fff;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+tbody tr { border-bottom: 1px solid #f0f0f0; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--hijau-muda); }
+
+tbody td {
+  padding: 9px 12px;
+  vertical-align: top;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+.badge-anggota   { background: var(--hijau-muda);  color: var(--hijau-tua); }
+.badge-umum      { background: var(--biru-muda);   color: var(--biru); }
+.badge-tamu      { background: #fff3e0; color: #e65100; }
+
+/* ── PENCARIAN & FILTER ── */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.filter-row .form-input,
+.filter-row .form-select {
+  flex: 1;
+  min-width: 140px;
+  margin-bottom: 0;
+}
+
+/* ── LOGIN ── */
+.login-wrap {
+  max-width: 380px;
+  margin: 40px auto;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-logo .ikon { font-size: 3rem; }
+
+/* ── GRAFIK BATANG SEDERHANA ── */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 100px;
+  padding: 4px 0;
+}
+
+.bar {
+  flex: 1;
+  min-width: 6px;
+  background: var(--hijau-mid);
+  border-radius: 3px 3px 0 0;
+  opacity: .85;
+  transition: var(--trans);
+  position: relative;
+}
+
+.bar:hover { opacity: 1; }
+
+.bar-tooltip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,.75);
+  color: #fff;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: .7rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: .15s;
+}
+
+.bar:hover .bar-tooltip { opacity: 1; }
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  width: 20px; height: 20px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── PRIVASI ── */
+.privasi-box {
+  background: var(--hijau-muda);
+  border: 1px solid #a5d6a7;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: .78rem;
+  color: var(--hijau-tua);
+  margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay.tampil { display: flex; }
+
+.modal {
+  background: var(--putih);
+  border-radius: var(--radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: var(--shadow-lg);
+  animation: muncul .25s ease;
+}
+
+@keyframes muncul {
+  from { opacity: 0; transform: scale(.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.modal-judul {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--teks);
+  margin-bottom: 16px;
+}
+
+.modal-aksi {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+/* ── RESPONSIF ── */
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  .stat-angka { font-size: 1.6rem; }
+  .main { padding: 14px 12px; }
+  .kartu { padding: 16px 14px; }
+  .nav-tab { font-size: .72rem; padding: 10px 4px; }
+  thead th, tbody td { padding: 8px; font-size: .8rem; }
+}
+
+/* ── PRINT ── */
+@media print {
+  .header-banner .nav-tabs,
+  .status-bar,
+  .btn,
+  .filter-row { display: none !important; }
+  .kartu { box-shadow: none; border: 1px solid #ccc; }
+  body { background: #fff; }
+}
+
+/* ── AKSESIBILITAS ── */
+:focus-visible { outline: 2px solid var(--hijau); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; clip: rect(0,0,0,0); }
+</style>
+</head>
+<body>
+
+<!-- STATUS KONEKSI -->
+<div class="status-bar">
+  <span class="dot-koneksi" id="dotKoneksi"></span>
+  <span id="statusKoneksi">Memeriksa koneksi…</span>
+  <span style="margin-left:auto;color:#999" id="waktuSync"></span>
+</div>
+
+<!-- NOTIFIKASI -->
+<div class="notif" id="notif" role="alert" aria-live="polite"></div>
+
+<!-- HEADER -->
+<header class="header-banner">
+  <div id="bannerWrap">
+    <div class="banner-default">
+      <div class="logo-icon">📚</div>
+      <div class="header-teks">
+        <h1>TBM Iqro Lempake</h1>
+        <p>Taman Baca Masyarakat · Jl. Joyo Mulyo Gg. Atthoriq RT.37, Samarinda</p>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav-tabs" role="tablist">
+    <button class="nav-tab aktif" onclick="gantiTab('absensi')" role="tab" aria-selected="true">
+      ✏️ Absensi
+    </button>
+    <button class="nav-tab" onclick="gantiTab('dashboard')" role="tab" aria-selected="false">
+      📊 Dashboard
+    </button>
+    <button class="nav-tab" onclick="gantiTab('admin')" role="tab" aria-selected="false">
+      🔐 Admin
+    </button>
+  </nav>
+</header>
+
+<main class="main">
+
+  <!-- ═══════════════════════════════════════════════
+       HALAMAN ABSENSI (PUBLIK)
+  ═══════════════════════════════════════════════ -->
+  <section class="halaman aktif" id="hal-absensi">
+
+    <!-- Statistik publik -->
+    <div class="stat-grid">
+      <div class="stat-item">
+        <div class="stat-angka" id="statHariIni">–</div>
+        <div class="stat-label">Hari Ini</div>
+      </div>
+      <div class="stat-item oranye">
+        <div class="stat-angka" id="statBulanIni">–</div>
+        <div class="stat-label">Bulan Ini</div>
+      </div>
+      <div class="stat-item biru">
+        <div class="stat-angka" id="statTotal">–</div>
+        <div class="stat-label">Total</div>
+      </div>
+    </div>
+
+    <div class="kartu">
+      <div class="kartu-judul">✏️ Formulir Absensi Kunjungan</div>
+
+      <div class="privasi-box">
+        🔒 Data Anda disimpan hanya untuk keperluan pencatatan kunjungan TBM Iqro dan tidak dibagikan kepada pihak ketiga.
+      </div>
+
+      <form id="formAbsensi" novalidate>
+
+        <!-- Kategori pengunjung -->
+        <div class="form-group">
+          <label class="form-label" for="kategori">Kategori Pengunjung <span class="wajib">*</span></label>
+          <select class="form-select" id="kategori" required>
+            <option value="">— Pilih kategori —</option>
+            <option value="Anggota TBM">Anggota TBM Iqro</option>
+            <option value="Pengunjung Umum">Pengunjung Umum</option>
+            <option value="Tamu / Rombongan">Tamu / Rombongan Instansi</option>
+          </select>
+          <div class="form-error" id="err-kategori">Pilih kategori pengunjung.</div>
+        </div>
+
+        <!-- Nama lengkap -->
+        <div class="form-group">
+          <label class="form-label" for="nama">Nama Lengkap <span class="wajib">*</span></label>
+          <input class="form-input" type="text" id="nama" placeholder="Masukkan nama lengkap" required autocomplete="name">
+          <div class="form-error" id="err-nama">Nama lengkap wajib diisi.</div>
+        </div>
+
+        <!-- No. Anggota (muncul jika anggota) -->
+        <div class="form-group" id="grupNoAnggota" style="display:none">
+          <label class="form-label" for="noAnggota">Nomor Anggota</label>
+          <input class="form-input" type="text" id="noAnggota" placeholder="Contoh: A-001">
+          <div class="form-hint">Nomor tertera di kartu anggota TBM Iqro.</div>
+        </div>
+
+        <!-- No. HP -->
+        <div class="form-group">
+          <label class="form-label" for="noHp">Nomor HP <span style="font-weight:400;color:var(--abu)">(opsional)</span></label>
+          <input class="form-input" type="tel" id="noHp" placeholder="Contoh: 0852-xxxx-xxxx" autocomplete="tel">
+        </div>
+
+        <!-- Asal -->
+        <div class="form-group">
+          <label class="form-label" for="asal">Asal Sekolah / Instansi / Komunitas</label>
+          <input class="form-input" type="text" id="asal" placeholder="Misal: SDN 001 Lempake, Universitas Mulawarman, Umum">
+        </div>
+
+        <!-- Tujuan -->
+        <div class="form-group">
+          <label class="form-label" for="tujuan">Tujuan Kunjungan <span class="wajib">*</span></label>
+          <select class="form-select" id="tujuan" required>
+            <option value="">— Pilih tujuan —</option>
+            <option value="Membaca di tempat">Membaca di tempat</option>
+            <option value="Meminjam buku">Meminjam buku</option>
+            <option value="Mengembalikan buku">Mengembalikan buku</option>
+            <option value="Belajar kelompok">Belajar kelompok</option>
+            <option value="Kegiatan / acara">Kegiatan / acara</option>
+            <option value="Kunjungan rombongan">Kunjungan rombongan</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+          <div class="form-error" id="err-tujuan">Pilih tujuan kunjungan.</div>
+        </div>
+
+        <!-- Catatan -->
+        <div class="form-group">
+          <label class="form-label" for="catatan">Catatan Tambahan <span style="font-weight:400;color:var(--abu)">(opsional)</span></label>
+          <textarea class="form-textarea" id="catatan" placeholder="Pesan, saran, atau keterangan lain…"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primer" id="btnSimpan">
+          <span id="btnSimpanTeks">Simpan Absensi</span>
+          <span id="btnSimpanSpinner" style="display:none"><span class="spinner"></span></span>
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Tren kunjungan publik -->
+    <div class="kartu">
+      <div class="kartu-judul">📈 Tren Kunjungan 30 Hari</div>
+      <div class="bar-chart" id="grafikPublik"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       HALAMAN DASHBOARD (ADMIN)
+  ═══════════════════════════════════════════════ -->
+  <section class="halaman" id="hal-dashboard">
+    <div id="wrapDashboard">
+      <div style="text-align:center;padding:40px;color:var(--abu)">
+        <div style="font-size:2rem">🔐</div>
+        <p style="margin-top:8px">Login sebagai administrator untuk melihat dashboard lengkap.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════
+       HALAMAN ADMIN
+  ═══════════════════════════════════════════════ -->
+  <section class="halaman" id="hal-admin">
+
+    <!-- Form login -->
+    <div id="formLoginWrap" class="login-wrap">
+      <div class="kartu">
+        <div class="login-logo">
+          <div class="ikon">🔐</div>
+          <div class="kartu-judul" style="justify-content:center;margin-top:8px">Login Administrator</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="loginPass">Kata Sandi</label>
+          <input class="form-input" type="password" id="loginPass" placeholder="Masukkan kata sandi" autocomplete="current-password">
+          <div class="form-error tampil" id="errLogin" style="display:none"></div>
+        </div>
+        <button class="btn btn-primer" onclick="doLogin()" id="btnLogin">
+          <span id="btnLoginTeks">Masuk</span>
+          <span id="btnLoginSpinner" style="display:none"><span class="spinner"></span></span>
+        </button>
+        <p style="font-size:.75rem;color:var(--abu);text-align:center;margin-top:14px">
+          Kata sandi default: <code>tbmiqro2025</code><br>Ganti segera setelah login pertama.
+        </p>
+      </div>
+    </div>
+
+    <!-- Panel admin (muncul setelah login) -->
+    <div id="panelAdmin" style="display:none">
+
+      <div class="kartu">
+        <div class="kartu-judul">⚙️ Panel Administrator</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="btn btn-sekunder btn-kecil" onclick="tampilGantiPass()">🔑 Ganti Kata Sandi</button>
+          <button class="btn btn-sekunder btn-kecil" onclick="tampilUnggahBanner()">🖼️ Banner</button>
+          <button class="btn btn-bahaya btn-kecil" onclick="doLogout()">Keluar</button>
+        </div>
+
+        <!-- Ganti password -->
+        <div id="formGantiPass" style="display:none" class="kartu" style="background:var(--abu-muda)">
+          <div class="kartu-judul">🔑 Ganti Kata Sandi</div>
+          <div class="form-group">
+            <label class="form-label">Kata Sandi Lama</label>
+            <input class="form-input" type="password" id="passLama">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kata Sandi Baru (min. 6 karakter)</label>
+            <input class="form-input" type="password" id="passBaru">
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primer btn-kecil" onclick="doGantiPass()">Simpan</button>
+            <button class="btn btn-sekunder btn-kecil" onclick="document.getElementById('formGantiPass').style.display='none'">Batal</button>
+          </div>
+        </div>
+
+        <!-- Unggah banner -->
+        <div id="formBanner" style="display:none" class="kartu" style="background:var(--abu-muda)">
+          <div class="kartu-judul">🖼️ Banner TBM Iqro</div>
+          <div class="form-group">
+            <label class="form-label">URL Banner (gambar publik)</label>
+            <input class="form-input" type="url" id="inputBannerUrl" placeholder="https://…">
+            <div class="form-hint">Tempel URL gambar banner dari Google Drive (share publik) atau hosting lain.</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primer btn-kecil" onclick="simpanBanner()">Simpan Banner</button>
+            <button class="btn btn-bahaya btn-kecil" onclick="hapusBanner()">Hapus Banner</button>
+            <button class="btn btn-sekunder btn-kecil" onclick="document.getElementById('formBanner').style.display='none'">Batal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data & ekspor -->
+      <div class="kartu">
+        <div class="kartu-judul">📋 Data Absensi</div>
+
+        <!-- Pencarian & filter -->
+        <div class="filter-row">
+          <input class="form-input" type="search" id="cariQ" placeholder="🔍 Cari nama, HP, asal…">
+          <select class="form-select" id="filterKategori">
+            <option value="">Semua kategori</option>
+            <option value="Anggota TBM">Anggota TBM</option>
+            <option value="Pengunjung Umum">Pengunjung Umum</option>
+            <option value="Tamu / Rombongan">Tamu / Rombongan</option>
+          </select>
+        </div>
+        <div class="filter-row" style="margin-bottom:14px">
+          <input class="form-input" type="date" id="filterDari" title="Dari tanggal">
+          <input class="form-input" type="date" id="filterSampai" title="Sampai tanggal">
+          <button class="btn btn-sekunder btn-kecil" onclick="muatAbsensi()">Terapkan</button>
+        </div>
+
+        <!-- Aksi ekspor -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="btn btn-sekunder btn-kecil" onclick="eksporCSV()">⬇️ CSV</button>
+          <button class="btn btn-sekunder btn-kecil" onclick="backupJSON()">💾 Backup JSON</button>
+          <button class="btn btn-sekunder btn-kecil" onclick="document.getElementById('inputRestore').click()">📂 Restore JSON</button>
+          <button class="btn btn-sekunder btn-kecil" onclick="window.print()">🖨️ Cetak</button>
+          <button class="btn btn-bahaya btn-kecil" onclick="konfirmasiHapusSemua()">🗑️ Hapus Semua</button>
+          <input type="file" id="inputRestore" accept=".json" style="display:none" onchange="restoreJSON(this)">
+        </div>
+
+        <!-- Tabel data -->
+        <div class="tabel-wrap">
+          <table id="tabelAbsensi">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Waktu</th>
+                <th>Nama</th>
+                <th>Kategori</th>
+                <th>No. Anggota</th>
+                <th>No. HP</th>
+                <th>Asal</th>
+                <th>Tujuan</th>
+                <th>Catatan</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyAbsensi">
+              <tr><td colspan="10" style="text-align:center;color:var(--abu);padding:24px">Memuat data…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginasi -->
+        <div id="paginasi" style="display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap"></div>
+        <p id="infoTotal" style="text-align:center;font-size:.8rem;color:var(--abu);margin-top:6px"></p>
+      </div>
+
+    </div><!-- /panelAdmin -->
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════
+     MODAL EDIT
+═══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalEdit">
+  <div class="modal" role="dialog" aria-labelledby="modalEditJudul">
+    <div class="modal-judul" id="modalEditJudul">✏️ Edit Data Absensi</div>
+    <input type="hidden" id="editId">
+
+    <div class="form-group">
+      <label class="form-label">Nama Lengkap <span class="wajib">*</span></label>
+      <input class="form-input" type="text" id="editNama">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kategori</label>
+      <select class="form-select" id="editKategori">
+        <option value="Anggota TBM">Anggota TBM Iqro</option>
+        <option value="Pengunjung Umum">Pengunjung Umum</option>
+        <option value="Tamu / Rombongan">Tamu / Rombongan</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">No. Anggota</label>
+      <input class="form-input" type="text" id="editNoAnggota">
+    </div>
+    <div class="form-group">
+      <label class="form-label">No. HP</label>
+      <input class="form-input" type="tel" id="editNoHp">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Asal</label>
+      <input class="form-input" type="text" id="editAsal">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tujuan</label>
+      <select class="form-select" id="editTujuan">
+        <option value="Membaca di tempat">Membaca di tempat</option>
+        <option value="Meminjam buku">Meminjam buku</option>
+        <option value="Mengembalikan buku">Mengembalikan buku</option>
+        <option value="Belajar kelompok">Belajar kelompok</option>
+        <option value="Kegiatan / acara">Kegiatan / acara</option>
+        <option value="Kunjungan rombongan">Kunjungan rombongan</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Catatan</label>
+      <textarea class="form-textarea" id="editCatatan"></textarea>
+    </div>
+
+    <div class="modal-aksi">
+      <button class="btn btn-sekunder btn-kecil" onclick="tutupModal('modalEdit')">Batal</button>
+      <button class="btn btn-primer btn-kecil" onclick="simpanEdit()">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI -->
+<div class="modal-overlay" id="modalKonfirmasi">
+  <div class="modal">
+    <div class="modal-judul" id="modalKonfirmasiJudul">⚠️ Konfirmasi</div>
+    <p id="modalKonfirmasiPesan" style="color:var(--teks-sub);font-size:.9rem"></p>
+    <div class="modal-aksi">
+      <button class="btn btn-sekunder btn-kecil" onclick="tutupModal('modalKonfirmasi')">Batal</button>
+      <button class="btn btn-bahaya btn-kecil" id="btnKonfirmasiOk">Ya, Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// KONFIGURASI — GANTI URL INI SETELAH DEPLOY GAS
+// ═══════════════════════════════════════════════
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbwhA-myrMJaj4uPluF_x-5fCJy89sMcPy91kWYEi23bzqRkiUbZ4vCER1cW1QNXUdVk/exec';
+
+// ─── STATE APLIKASI ───────────────────────────
+let TOKEN       = localStorage.getItem('tbm_token') || '';
+let halAktif    = 'absensi';
+let halamanData = 1;
+let dataCache   = [];
+
+// ─── UTILITAS ─────────────────────────────────
+function tampilNotif(pesan, tipe = 'sukses', durasi = 3500) {
+  const el = document.getElementById('notif');
+  const ikon = tipe === 'sukses' ? '✅' : tipe === 'gagal' ? '❌' : 'ℹ️';
+  el.textContent = ikon + ' ' + pesan;
+  el.className = 'notif ' + tipe;
+  el.style.display = 'flex';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, durasi);
+}
+
+function setKoneksi(status) {
+  const dot = document.getElementById('dotKoneksi');
+  const lbl = document.getElementById('statusKoneksi');
+  dot.className = 'dot-koneksi ' + status;
+  if (status === 'online')  lbl.textContent = 'Terhubung ke server';
+  if (status === 'offline') lbl.textContent = 'Tidak ada koneksi internet';
+  if (status === 'loading') lbl.textContent = 'Menyinkronkan…';
+  if (status === '') { dot.className = 'dot-koneksi'; lbl.textContent = 'Memeriksa koneksi…'; }
+}
+
+function setWaktuSync() {
+  document.getElementById('waktuSync').textContent =
+    'Sync: ' + new Date().toLocaleTimeString('id-ID');
+}
+
+function formatWaktu(iso) {
+  if (!iso) return '–';
+  const d = new Date(iso);
+  return d.toLocaleString('id-ID', {
+    day: '2-digit', month: 'short', year: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function sanitize(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+function badgeKategori(kat) {
+  const cls = kat === 'Anggota TBM' ? 'badge-anggota'
+    : kat === 'Tamu / Rombongan'   ? 'badge-tamu' : 'badge-umum';
+  return `<span class="badge ${cls}">${sanitize(kat)}</span>`;
+}
+
+// ─── NAVIGASI ─────────────────────────────────
+function gantiTab(id) {
+  halAktif = id;
+  document.querySelectorAll('.halaman').forEach(h => h.classList.remove('aktif'));
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.remove('aktif');
+    t.setAttribute('aria-selected', 'false');
+  });
+  document.getElementById('hal-' + id).classList.add('aktif');
+
+  const tabs = ['absensi', 'dashboard', 'admin'];
+  const navTabs = document.querySelectorAll('.nav-tab');
+  const idx = tabs.indexOf(id);
+  if (navTabs[idx]) {
+    navTabs[idx].classList.add('aktif');
+    navTabs[idx].setAttribute('aria-selected', 'true');
+  }
+
+  if (id === 'dashboard' && TOKEN) {
+    muatDashboard();
+  }
+  if (id === 'admin' && TOKEN) {
+    tampilPanelAdmin();
+    muatAbsensi();
+  }
+}
+
+// ─── API HELPER ───────────────────────────────
+async function api(params) {
+  if (BACKEND_URL === 'GANTI_DENGAN_URL_GOOGLE_APPS_SCRIPT_DEPLOYMENT') {
+    console.warn('BACKEND_URL belum diisi!');
+    return { ok: false, pesan: 'Backend belum dikonfigurasi. Isi BACKEND_URL terlebih dahulu.' };
+  }
+  try {
+    setKoneksi('loading');
+    // Bersihkan nilai undefined/null agar tidak masuk query string
+    const bersih = {};
+    Object.entries(params).forEach(([k,v]) => {
+      if (v !== undefined && v !== null) bersih[k] = v;
+    });
+    const qs = new URLSearchParams(bersih).toString();
+    const res = await fetch(BACKEND_URL + '?' + qs, {
+      redirect: 'follow',  // Penting: GAS selalu redirect ke URL final
+      cache: 'no-cache',
+      mode: 'cors'         // GAS Web App sudah mendukung CORS GET
+    });
+    // GAS kadang mengembalikan 302 yang di-follow otomatis, hasil akhir tetap 200
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      // Jika bukan JSON, mungkin halaman error GAS HTML
+      console.error('Respons bukan JSON:', text.substring(0, 300));
+      setKoneksi('offline');
+      return { ok: false, pesan: 'Server mengembalikan respons tidak terduga. Pastikan GAS sudah di-deploy dengan benar.' };
+    }
+    setKoneksi('online');
+    setWaktuSync();
+    return data;
+  } catch (e) {
+    setKoneksi('offline');
+    console.error('api() error:', e);
+    return { ok: false, pesan: 'Gagal menghubungi server. Periksa koneksi internet Anda.' };
+  }
+}
+
+// GAS tidak mendukung POST dengan Content-Type: application/json karena CORS preflight.
+// Solusi: kirim semua data via GET query string (aman untuk skala TBM, data bukan keuangan/medis).
+// Untuk data besar (restore JSON), gunakan chunking atau kirim via form-data tanpa preflight.
+async function apiPost(params) {
+  // Delegasikan ke api() — semua request pakai GET dengan query string
+  // GAS men-support GET sepenuhnya tanpa CORS preflight
+  return api(params);
+}
+
+// Helper khusus untuk restore JSON (data besar, tidak bisa masuk query string)
+async function apiPostJSON(params) {
+  if (BACKEND_URL === 'GANTI_DENGAN_URL_GOOGLE_APPS_SCRIPT_DEPLOYMENT') {
+    return { ok: false, pesan: 'Backend belum dikonfigurasi. Isi BACKEND_URL terlebih dahulu.' };
+  }
+  try {
+    setKoneksi('loading');
+    // Kirim tanpa Content-Type header agar tidak trigger CORS preflight
+    // GAS membaca postData.contents dari request body text/plain
+    const res = await fetch(BACKEND_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      cache: 'no-cache',
+      body: JSON.stringify(params)
+      // SENGAJA tidak ada header Content-Type agar browser kirim sebagai text/plain
+      // yang tidak memicu CORS preflight OPTIONS
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const data = JSON.parse(text);
+    setKoneksi('online');
+    setWaktuSync();
+    return data;
+  } catch (e) {
+    setKoneksi('offline');
+    console.error('apiPostJSON error:', e);
+    return { ok: false, pesan: 'Gagal menghubungi server. Periksa koneksi internet Anda.' };
+  }
+}
+
+// ─── MUAT STATISTIK PUBLIK ────────────────────
+async function muatStats() {
+  const r = await api({ action: 'getStats' });
+  if (!r.ok) return;
+  document.getElementById('statHariIni').textContent  = r.hariIni  ?? 0;
+  document.getElementById('statBulanIni').textContent = r.bulanIni ?? 0;
+  document.getElementById('statTotal').textContent    = r.total    ?? 0;
+  if (r.tren) renderGrafikPublik(r.tren);
+}
+
+function renderGrafikPublik(tren) {
+  const container = document.getElementById('grafikPublik');
+  if (!tren || tren.length === 0) { container.innerHTML = '<em style="color:var(--abu);font-size:.85rem">Belum ada data.</em>'; return; }
+  const max = Math.max(...tren.map(t => t.jumlah), 1);
+  container.innerHTML = tren.map(t => {
+    const pct = Math.round((t.jumlah / max) * 100);
+    return `<div class="bar" style="height:${Math.max(pct, 2)}%">
+      <div class="bar-tooltip">${t.tanggal}<br>${t.jumlah} kunjungan</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── FORMULIR ABSENSI ─────────────────────────
+document.getElementById('kategori').addEventListener('change', function() {
+  document.getElementById('grupNoAnggota').style.display =
+    this.value === 'Anggota TBM' ? 'block' : 'none';
+});
+
+document.getElementById('formAbsensi').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  if (!validasiForm()) return;
+
+  const btnTeks    = document.getElementById('btnSimpanTeks');
+  const btnSpinner = document.getElementById('btnSimpanSpinner');
+  const btnSimpan  = document.getElementById('btnSimpan');
+
+  btnTeks.style.display    = 'none';
+  btnSpinner.style.display = 'inline-block';
+  btnSimpan.disabled       = true;
+
+  const payload = {
+    action:      'simpanAbsensi',
+    nama:        document.getElementById('nama').value.trim(),
+    kategori:    document.getElementById('kategori').value,
+    noAnggota:   document.getElementById('noAnggota').value.trim(),
+    noHp:        document.getElementById('noHp').value.trim(),
+    asal:        document.getElementById('asal').value.trim(),
+    tujuan:      document.getElementById('tujuan').value,
+    catatan:     document.getElementById('catatan').value.trim(),
+    tsPerangkat: new Date().toISOString(),
+    userAgent:   navigator.userAgent.substring(0, 200)
+  };
+
+  const r = await apiPost(payload);
+
+  btnTeks.style.display    = 'inline';
+  btnSpinner.style.display = 'none';
+  btnSimpan.disabled       = false;
+
+  if (r.ok) {
+    tampilNotif(r.pesan || 'Absensi berhasil disimpan!', 'sukses');
+    this.reset();
+    document.getElementById('grupNoAnggota').style.display = 'none';
+    muatStats();
+  } else {
+    tampilNotif(r.pesan || 'Gagal menyimpan. Coba lagi.', 'gagal');
+  }
+});
+
+function validasiForm() {
+  let valid = true;
+  const cek = (id, errId, pesan) => {
+    const el = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (!el.value.trim()) {
+      el.classList.add('error');
+      err.classList.add('tampil');
+      valid = false;
+    } else {
+      el.classList.remove('error');
+      err.classList.remove('tampil');
+    }
+  };
+  cek('kategori', 'err-kategori');
+  cek('nama',     'err-nama');
+  cek('tujuan',   'err-tujuan');
+  if (!valid) tampilNotif('Lengkapi kolom yang wajib diisi.', 'gagal');
+  return valid;
+}
+
+// Hapus error saat user mengetik
+['kategori','nama','tujuan'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    document.getElementById(id).classList.remove('error');
+  });
+});
+
+// ─── LOGIN ────────────────────────────────────
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+async function doLogin() {
+  const pass = document.getElementById('loginPass').value;
+  if (!pass) { tampilNotif('Masukkan kata sandi.', 'gagal'); return; }
+
+  const btnTeks    = document.getElementById('btnLoginTeks');
+  const btnSpinner = document.getElementById('btnLoginSpinner');
+  const btn        = document.getElementById('btnLogin');
+  btnTeks.style.display = 'none'; btnSpinner.style.display = 'inline-block'; btn.disabled = true;
+
+  const r = await apiPost({ action: 'login', password: pass });
+
+  btnTeks.style.display = 'inline'; btnSpinner.style.display = 'none'; btn.disabled = false;
+
+  if (r.ok) {
+    TOKEN = r.token;
+    localStorage.setItem('tbm_token', TOKEN);
+    document.getElementById('loginPass').value = '';
+    tampilPanelAdmin();
+    muatAbsensi();
+    tampilNotif('Login berhasil!', 'sukses');
+  } else {
+    const errEl = document.getElementById('errLogin');
+    errEl.textContent = r.pesan || 'Login gagal.';
+    errEl.style.display = 'block';
+    tampilNotif(r.pesan || 'Kata sandi salah.', 'gagal');
+  }
+}
+
+function doLogout() {
+  TOKEN = '';
+  localStorage.removeItem('tbm_token');
+  document.getElementById('panelAdmin').style.display    = 'none';
+  document.getElementById('formLoginWrap').style.display = 'block';
+  document.getElementById('wrapDashboard').innerHTML =
+    '<div style="text-align:center;padding:40px;color:var(--abu)"><div style="font-size:2rem">🔐</div><p style="margin-top:8px">Login sebagai administrator untuk melihat dashboard lengkap.</p></div>';
+  tampilNotif('Berhasil keluar.', 'info');
+}
+
+function tampilPanelAdmin() {
+  document.getElementById('formLoginWrap').style.display = 'none';
+  document.getElementById('panelAdmin').style.display    = 'block';
+}
+
+// ─── DASHBOARD ADMIN ──────────────────────────
+async function muatDashboard() {
+  if (!TOKEN) return;
+  const wrap = document.getElementById('wrapDashboard');
+  wrap.innerHTML = '<div style="text-align:center;padding:24px;color:var(--abu)">Memuat…</div>';
+
+  const [stats, absensi] = await Promise.all([
+    api({ action: 'getStats' }),
+    api({ action: 'getAbsensi', token: TOKEN, limit: 10 })
+  ]);
+
+  if (!stats.ok) { wrap.innerHTML = '<p style="color:var(--merah);padding:20px">' + sanitize(stats.pesan) + '</p>'; return; }
+
+  const kategoriHtml = stats.kategori
+    ? Object.entries(stats.kategori).map(([k,v]) =>
+        `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
+          <span>${sanitize(k)}</span><strong>${v}</strong>
+        </div>`).join('')
+    : '<em style="color:var(--abu)">Belum ada data.</em>';
+
+  const trenHtml = stats.tren
+    ? `<div class="bar-chart">${stats.tren.map(t => {
+        const max = Math.max(...stats.tren.map(x => x.jumlah), 1);
+        const pct = Math.round((t.jumlah / max) * 100);
+        return `<div class="bar" style="height:${Math.max(pct,2)}%">
+          <div class="bar-tooltip">${t.tanggal}<br>${t.jumlah}</div>
+        </div>`;
+      }).join('')}</div>` : '';
+
+  const recentRows = (absensi.data || []).slice(0,8).map((d, i) =>
+    `<tr>
+      <td>${sanitize(formatWaktu(d['Timestamp Server']))}</td>
+      <td>${sanitize(d['Nama Lengkap'])}</td>
+      <td>${badgeKategori(d['Kategori'])}</td>
+      <td>${sanitize(d['Tujuan'])}</td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--abu);padding:20px">Belum ada data.</td></tr>';
+
+  wrap.innerHTML = `
+    <div class="stat-grid">
+      <div class="stat-item"><div class="stat-angka">${stats.hariIni}</div><div class="stat-label">Hari Ini</div></div>
+      <div class="stat-item oranye"><div class="stat-angka">${stats.bulanIni}</div><div class="stat-label">Bulan Ini</div></div>
+      <div class="stat-item biru"><div class="stat-angka">${stats.total}</div><div class="stat-label">Total</div></div>
+    </div>
+    <div class="kartu">
+      <div class="kartu-judul">📈 Tren 30 Hari Terakhir</div>
+      ${trenHtml}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="kartu">
+        <div class="kartu-judul">👥 Rekap Kategori</div>
+        ${kategoriHtml}
+      </div>
+      <div class="kartu">
+        <div class="kartu-judul">📅 Kunjungan Terbaru</div>
+        <div class="tabel-wrap">
+          <table>
+            <thead><tr><th>Waktu</th><th>Nama</th><th>Kategori</th><th>Tujuan</th></tr></thead>
+            <tbody>${recentRows}</tbody>
+          </table>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ─── MUAT DATA ABSENSI (ADMIN) ────────────────
+async function muatAbsensi(page = 1) {
+  if (!TOKEN) return;
+  halamanData = page;
+  document.getElementById('tbodyAbsensi').innerHTML =
+    '<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--abu)">Memuat…</td></tr>';
+
+  const params = {
+    action:   'getAbsensi',
+    token:    TOKEN,
+    q:        document.getElementById('cariQ').value,
+    kategori: document.getElementById('filterKategori').value,
+    dari:     document.getElementById('filterDari').value,
+    sampai:   document.getElementById('filterSampai').value,
+    page,
+    limit:    50
+  };
+
+  const r = await api(params);
+
+  if (!r.ok) {
+    if (r.pesan && r.pesan.includes('Sesi')) {
+      tampilNotif('Sesi habis. Silakan login ulang.', 'gagal');
+      doLogout(); gantiTab('admin'); return;
+    }
+    document.getElementById('tbodyAbsensi').innerHTML =
+      '<tr><td colspan="10" style="text-align:center;color:var(--merah);padding:20px">' + sanitize(r.pesan) + '</td></tr>';
+    return;
+  }
+
+  dataCache = r.data || [];
+  renderTabelAbsensi(dataCache, r.total || 0, r.totalPages || 1, page);
+}
+
+function renderTabelAbsensi(data, total, totalPages, page) {
+  const tbody = document.getElementById('tbodyAbsensi');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:var(--abu);padding:28px">Tidak ada data ditemukan.</td></tr>';
+    document.getElementById('paginasi').innerHTML = '';
+    document.getElementById('infoTotal').textContent = '';
+    return;
+  }
+
+  const offset = (page - 1) * 50;
+  tbody.innerHTML = data.map((d, i) => `
+    <tr>
+      <td>${offset + i + 1}</td>
+      <td style="white-space:nowrap;font-size:.78rem">${sanitize(formatWaktu(d['Timestamp Server']))}</td>
+      <td>${sanitize(d['Nama Lengkap'])}</td>
+      <td>${badgeKategori(d['Kategori'])}</td>
+      <td>${sanitize(d['No. Anggota']) || '–'}</td>
+      <td>${sanitize(d['No. HP']) || '–'}</td>
+      <td>${sanitize(d['Asal']) || '–'}</td>
+      <td>${sanitize(d['Tujuan'])}</td>
+      <td style="max-width:120px;white-space:normal;font-size:.8rem">${sanitize(d['Catatan']) || '–'}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-sekunder btn-kecil" onclick="bukaEdit(${i})" title="Edit">✏️</button>
+        <button class="btn btn-bahaya btn-kecil" onclick="konfirmasiHapus('${sanitize(d['ID'])}')" title="Hapus">🗑️</button>
+      </td>
+    </tr>`).join('');
+
+  // Paginasi
+  const pagEl = document.getElementById('paginasi');
+  let pagHtml = '';
+  for (let p = 1; p <= totalPages; p++) {
+    pagHtml += `<button class="btn btn-kecil ${p === page ? 'btn-primer' : 'btn-sekunder'}"
+      onclick="muatAbsensi(${p})">${p}</button>`;
+  }
+  pagEl.innerHTML = pagHtml;
+  document.getElementById('infoTotal').textContent = `Total: ${total} catatan — Halaman ${page} dari ${totalPages}`;
+}
+
+// ─── EDIT ABSENSI ─────────────────────────────
+function bukaEdit(idx) {
+  const d = dataCache[idx];
+  document.getElementById('editId').value        = d['ID'] || '';
+  document.getElementById('editNama').value      = d['Nama Lengkap'] || '';
+  document.getElementById('editKategori').value  = d['Kategori'] || '';
+  document.getElementById('editNoAnggota').value = d['No. Anggota'] || '';
+  document.getElementById('editNoHp').value      = d['No. HP'] || '';
+  document.getElementById('editAsal').value      = d['Asal'] || '';
+  document.getElementById('editTujuan').value    = d['Tujuan'] || '';
+  document.getElementById('editCatatan').value   = d['Catatan'] || '';
+  document.getElementById('modalEdit').classList.add('tampil');
+}
+
+async function simpanEdit() {
+  const id = document.getElementById('editId').value;
+  if (!id) return;
+
+  const r = await apiPost({
+    action:    'editAbsensi',
+    token:     TOKEN,
+    id,
+    nama:      document.getElementById('editNama').value.trim(),
+    kategori:  document.getElementById('editKategori').value,
+    noAnggota: document.getElementById('editNoAnggota').value.trim(),
+    noHp:      document.getElementById('editNoHp').value.trim(),
+    asal:      document.getElementById('editAsal').value.trim(),
+    tujuan:    document.getElementById('editTujuan').value,
+    catatan:   document.getElementById('editCatatan').value.trim()
+  });
+
+  if (r.ok) {
+    tutupModal('modalEdit');
+    tampilNotif(r.pesan, 'sukses');
+    muatAbsensi(halamanData);
+  } else {
+    tampilNotif(r.pesan || 'Gagal menyimpan.', 'gagal');
+  }
+}
+
+// ─── HAPUS ABSENSI ────────────────────────────
+function konfirmasiHapus(id) {
+  document.getElementById('modalKonfirmasiJudul').textContent = '🗑️ Hapus Data';
+  document.getElementById('modalKonfirmasiPesan').textContent = 'Yakin ingin menghapus catatan ini? Tindakan tidak dapat dibatalkan.';
+  document.getElementById('modalKonfirmasi').classList.add('tampil');
+  document.getElementById('btnKonfirmasiOk').onclick = async () => {
+    tutupModal('modalKonfirmasi');
+    const r = await apiPost({ action: 'hapusAbsensi', token: TOKEN, id });
+    if (r.ok) { tampilNotif(r.pesan, 'sukses'); muatAbsensi(halamanData); }
+    else tampilNotif(r.pesan || 'Gagal menghapus.', 'gagal');
+  };
+}
+
+function konfirmasiHapusSemua() {
+  document.getElementById('modalKonfirmasiJudul').textContent = '🗑️ Hapus Semua Data';
+  document.getElementById('modalKonfirmasiPesan').textContent = 'PERINGATAN: Semua data absensi akan dihapus permanen. Lakukan backup terlebih dahulu!';
+  document.getElementById('modalKonfirmasi').classList.add('tampil');
+  document.getElementById('btnKonfirmasiOk').onclick = async () => {
+    tutupModal('modalKonfirmasi');
+    const r = await apiPost({ action: 'hapusSemuaData', token: TOKEN });
+    if (r.ok) { tampilNotif(r.pesan, 'sukses'); muatAbsensi(); muatStats(); }
+    else tampilNotif(r.pesan || 'Gagal.', 'gagal');
+  };
+}
+
+// ─── MODAL ────────────────────────────────────
+function tutupModal(id) {
+  document.getElementById(id).classList.remove('tampil');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) tutupModal(el.id); });
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.tampil').forEach(m => tutupModal(m.id));
+  }
+});
+
+// ─── EKSPOR CSV ───────────────────────────────
+function eksporCSV() {
+  if (!TOKEN) return;
+  const url = BACKEND_URL + '?action=eksporCSV&token=' + encodeURIComponent(TOKEN);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'absensi-tbm-iqro-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ─── BACKUP JSON ─────────────────────────────
+async function backupJSON() {
+  if (!TOKEN) return;
+  tampilNotif('Menyiapkan backup…', 'info');
+  const r = await api({ action: 'backupJSON', token: TOKEN });
+  if (!r.ok) { tampilNotif(r.pesan, 'gagal'); return; }
+
+  const blob = new Blob([JSON.stringify(r, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'backup-tbm-iqro-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  tampilNotif('Backup berhasil diunduh.', 'sukses');
+}
+
+// ─── RESTORE JSON ────────────────────────────
+async function restoreJSON(input) {
+  if (!TOKEN || !input.files[0]) return;
+  const file = input.files[0];
+  const text = await file.text();
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch { tampilNotif('File JSON tidak valid.', 'gagal'); return; }
+
+  const dataArr = parsed.data || (Array.isArray(parsed) ? parsed : null);
+  if (!dataArr) { tampilNotif('Format backup tidak dikenali.', 'gagal'); return; }
+
+  tampilNotif('Mengembalikan ' + dataArr.length + ' data…', 'info', 6000);
+  const r = await apiPostJSON({ action: 'restoreJSON', token: TOKEN, data: dataArr });
+  if (r.ok) { tampilNotif(r.pesan, 'sukses'); muatAbsensi(); muatStats(); }
+  else tampilNotif(r.pesan || 'Restore gagal.', 'gagal');
+  input.value = '';
+}
+
+// ─── GANTI PASSWORD ───────────────────────────
+function tampilGantiPass() {
+  const el = document.getElementById('formGantiPass');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+async function doGantiPass() {
+  const lama = document.getElementById('passLama').value;
+  const baru = document.getElementById('passBaru').value;
+  if (!lama || !baru) { tampilNotif('Isi kedua kolom kata sandi.', 'gagal'); return; }
+
+  const r = await apiPost({ action: 'gantiPassword', token: TOKEN, passwordLama: lama, passwordBaru: baru });
+  if (r.ok) {
+    tampilNotif(r.pesan, 'sukses');
+    document.getElementById('formGantiPass').style.display = 'none';
+    doLogout(); gantiTab('admin');
+  } else {
+    tampilNotif(r.pesan, 'gagal');
+  }
+}
+
+// ─── BANNER ───────────────────────────────────
+function tampilUnggahBanner() {
+  const el = document.getElementById('formBanner');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+async function simpanBanner() {
+  const url = document.getElementById('inputBannerUrl').value.trim();
+  if (!url) { tampilNotif('Masukkan URL banner.', 'gagal'); return; }
+  const r = await apiPost({ action: 'setConfig', token: TOKEN, kunci: 'BANNER_URL', nilai: url });
+  if (r.ok) { tampilNotif('Banner disimpan.', 'sukses'); muatBanner(); }
+  else tampilNotif(r.pesan, 'gagal');
+}
+
+async function hapusBanner() {
+  const r = await apiPost({ action: 'setConfig', token: TOKEN, kunci: 'BANNER_URL', nilai: '' });
+  if (r.ok) { tampilNotif('Banner dihapus.', 'sukses'); muatBanner(); }
+  else tampilNotif(r.pesan, 'gagal');
+}
+
+async function muatBanner() {
+  const r = await api({ action: 'getConfig' });
+  if (!r.ok || !r.config) return;
+  const url = r.config['BANNER_URL'];
+  const wrap = document.getElementById('bannerWrap');
+  if (url) {
+    wrap.innerHTML = `<div class="banner-img-wrap"><img src="${sanitize(url)}" alt="Banner TBM Iqro"></div>`;
+  } else {
+    wrap.innerHTML = `<div class="banner-default">
+      <div class="logo-icon">📚</div>
+      <div class="header-teks">
+        <h1>TBM Iqro Lempake</h1>
+        <p>Taman Baca Masyarakat · Jl. Joyo Mulyo Gg. Atthoriq RT.37, Samarinda</p>
+      </div>
+    </div>`;
+  }
+}
+
+// ─── PENCARIAN LIVE ───────────────────────────
+let debounceTimer;
+document.getElementById('cariQ').addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => muatAbsensi(1), 500);
+});
+
+// ─── PING BACKEND ─────────────────────────────
+async function pingBackend() {
+  const r = await api({ action: 'ping' });
+  if (r.ok) setKoneksi('online');
+  else setKoneksi('offline');
+}
+
+// ─── INIT ────────────────────────────────────
+window.addEventListener('load', () => {
+  muatStats();
+  muatBanner();
+  pingBackend();
+
+  // Jika sudah ada token tersimpan, langsung tampil panel admin
+  if (TOKEN) {
+    tampilPanelAdmin();
+  }
+
+  // Auto-refresh stats setiap 5 menit
+  setInterval(muatStats, 5 * 60 * 1000);
+  // Auto-ping setiap 2 menit
+  setInterval(pingBackend, 2 * 60 * 1000);
+});
+
+// Peringatan offline
+window.addEventListener('offline', () => setKoneksi('offline'));
+window.addEventListener('online',  () => { setKoneksi('online'); muatStats(); });
+</script>
+</body>
+</html>
